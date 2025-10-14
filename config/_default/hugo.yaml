@@ -1,11 +1,33 @@
 defaultContentLanguage: 'en'
 defaultContentLanguageInSubdir: true
 
+# security:
+#   enableInlineShortcodes: true
+#   http:
+#     urls:
+#     - https://deckhouse.io
+
+markup:
+  highlight:
+    anchorLineNos: false
+    codeFences: true
+    guessSyntax: false
+    hl_Lines: ""
+    hl_inline: false
+    lineAnchors: ""
+    lineNoStart: 1
+    lineNos: false
+    lineNumbersInTable: true
+    noClasses: false
+    noHl: false
+    style: native
+    tabWidth: 4
+
 timeZone: "UTC"
 
 disableKinds:
 #- "404"
-#- home
+- home
 #- robotsTXT
 - RSS
 #- section

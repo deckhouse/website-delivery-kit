@@ -2,6 +2,7 @@
 title: Deckhouse Delivery Kit
 weight: 10
 menuTitle: Deckhouse Delivery Kit
+layout: single
 ---
 
 {{< alert level="warning" >}}
