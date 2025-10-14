@@ -68,7 +68,7 @@ RUN npm ci
 CMD ["node", "server.js"]
 ```
 
-```
+```shell
 # .helm/templates/myapp.yaml:
 apiVersion: apps/v1
 kind: Deployment
@@ -211,7 +211,7 @@ d8 dk cr login --insecure-registry registry.example.com
 
 2. Разместите файлы в директории основного чарта (по умолчанию `.helm` в корне Git-репозитория). Заметьте, что при публикации в чарт будут включены *только* следующие файлы и директории:
 
-   ```
+   ```shell
    .helm/
      charts/
      templates/
@@ -236,7 +236,7 @@ d8 dk cr login --insecure-registry registry.example.com
 
 Разместите `.helm` с содержимым чарта и соответствующий ему `werf.yaml` в отдельную директорию для каждого бандла:
 
-```
+```shell
 bundle1/
   .helm/
     templates/
