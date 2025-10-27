@@ -3,9 +3,45 @@ defaultContentLanguageInSubdir: true
 
 timeZone: "UTC"
 
+markup:
+  tableOfContents:
+    endLevel: 3
+    ordered: false
+    startLevel: 2
+  goldmark:
+    duplicateResourceFiles: true
+    parser:
+      attribute:
+        block: false
+        title: true
+      autoHeadingID: true
+      autoHeadingIDType: github
+      wrapStandAloneImageWithinParagraph: true
+    renderer:
+      hardWraps: false
+      unsafe: true
+      xhtml: false
+  highlight:
+    anchorLineNos: false
+    codeFences: true
+    guessSyntax: false
+    hl_Lines: ""
+    hl_inline: false
+    lineAnchors: ""
+    lineNoStart: 1
+    lineNos: false
+    lineNumbersInTable: true
+    noClasses: false
+    noHl: false
+    style: native
+    tabWidth: 4
+  diagrams:
+    enable: true
+    theme: default
+
 disableKinds:
 #- "404"
-#- home
+- home
 #- robotsTXT
 - RSS
 #- section
@@ -24,7 +60,7 @@ params:
     google: XXXX
     yandex: XXXX
   # GitHub repository link for editing a page and opening issues.
-  github_repo: https://github.com/deckhouse/deckhouse-delivery-kit
+  github_repo: https://github.com/deckhouse/delivery-kit
   # Show "Edit this page" link
   showedit: true
   remoteAssetURL: /includes/
@@ -34,22 +70,6 @@ params:
 
   # Global relevant links.
   links:
-
-menus:
-  # Site header menu
-  main:
-  - name: Get started
-    pageRef: /get-started/
-    weight: 1
-  - name: Guides
-    pageRef: /guides/
-    weight: 2
-  - name: Manuals
-    pageRef: /manuals/
-    weight: 3
-  - name: Reference
-    pageRef: /reference/
-    weight: 4
 
 module:
   imports:
@@ -79,5 +99,5 @@ languages:
     title: Deckhouse Delivery Kit
     baseURL: https://deckhouse.ru/products/delivery-kit/
     params:
-      publicRootURL: https://deckhouse.ru
+      publicRootURL: https://deckhouse.io
       description: ""
