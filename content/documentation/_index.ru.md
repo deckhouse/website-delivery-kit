@@ -1,7 +1,6 @@
 ---
-title: Deckhouse Delivery Kit
-weight: 10
-menuTitle: Deckhouse Delivery Kit
+title: Документация Deckhouse Delivery Kit
+description: Documentation for the project, including guides, API references, and tutorials.
 ---
 
 {{< alert level="warning" >}}

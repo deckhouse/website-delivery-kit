@@ -1,6 +1,6 @@
 ---
 title: Конфигурация проекта
-weight: 30
+weight: 80
 menuTitle: Deckhouse Delivery Kit
 ---
 
