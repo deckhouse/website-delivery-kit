@@ -192,7 +192,7 @@ maintainters:
 
 По мере необходимости добавьте в чарт шаблоны, параметры, зависимые чарты и прочее. Содержимое основного чарта может выглядеть так:
 
-```
+```bash
 .helm/
   charts/
     dependent-chart/
@@ -253,7 +253,7 @@ maintainters:
 
 Пример содержимого основного чарта, имеющего локальные зависимые чарты:
 
-```
+```shell
 .helm/
   charts/
     postgresql/
@@ -411,13 +411,13 @@ dependencies:
 
 Главный элемент шаблонизации — действие. Действие может возвращать только строки. Действие заключается в двойные фигурные скобки:
 
-```
+```shell
 {{ print "hello" }}
 ```
 
 Результат:
 
-```
+```shell
 hello
 ```
 
@@ -427,37 +427,37 @@ hello
 
 Объявление и присваивание переменной:
 
-```
+```shell
 {{ $myvar := "hello" }}
 ```
 
 Присваивание нового значения существующей переменной:
 
-```
+```shell
 {{ $myvar = "helloworld" }}
 ```
 
 Использование переменной:
 
-```
+```shell
 {{ $myvar }}
 ```
 
 Результат:
 
-```
+```shell
 helloworld
 ```
 
 Использование предопределенных переменных:
 
-```
+```shell
 {{ $.Values.werf.env }}
 ```
 
 Данные можно подставлять и без объявления переменных:
 
-```
+```shell
 labels:
   app: {{ "myapp" }}
 ```
@@ -471,14 +471,14 @@ labels:
 
 Также в переменные можно сохранять результат выполнения функций или конвейеров:
 
-```
+```shell
 {{ $myvar := 1 | add 1 1 }}
 {{ $myvar }} 
 ```
 
 Результат:
 
-```
+```shell
 3
 ```
 
@@ -488,7 +488,7 @@ labels:
 
 Область видимости может меняться при использовании некоторых блоков и функций. К примеру, блок `if` создаёт новую область видимости, а переменные, объявленные в блоке `if`, будут недоступны снаружи:
 
-```
+```shell
 {{ if true }}
   {{ $myvar := "hello" }}
 {{ end }}
@@ -498,13 +498,13 @@ labels:
 
 Результат:
 
-```
+```shell
 Error: ... undefined variable "$myvar"
 ```
 
 Чтобы обойти это ограничение, объявите переменную за пределами блока, а значение присвойте ей внутри блока:
 
-```
+```shell
 {{ $myvar := "" }}
 {{ if true }}
   {{ $myvar = "hello" }}
@@ -515,7 +515,7 @@ Error: ... undefined variable "$myvar"
 
 Результат:
 
-```
+```shell
 hello
 ```
 
@@ -540,13 +540,13 @@ hello
 
 Функции можно использовать только в действиях. Функции *могут* иметь аргументы и *могут* возвращать данные любого типа. Например, приведенная ниже функция сложения принимает три аргумента-числа и возвращает число:
 
-```
+```shell
 {{ add 3 2 1 }}
 ```
 
 Результат:
 
-```
+```shell
 6
 ```
 
@@ -564,13 +564,13 @@ hello
 
 Если аргумент — не простое значение, а вызов другой функции или конвейер, заключите его в круглые скобки `()`:
 
-```
+```shell
 {{ add 3 (add 1 1) (1 | add 1) }}
 ```
 
 Чтобы игнорировать возвращаемый функцией результат, просто сохраните его в переменную `$_`:
 
-```
+```shell
 {{ $_ := set $myDict "mykey" "myvalue"}}
 ```
 
@@ -578,7 +578,7 @@ hello
 
 Конвейеры позволяют передать результат выполнения первой функции как последний аргумент во вторую функцию, а результат второй функции — как последний аргумент в третью и так далее:
 
-```
+```shell
 {{ now | unixEpoch | quote }}
 ```
 
@@ -586,13 +586,13 @@ hello
 
 Итоговый результат:
 
-```
+```shell
 "1671466310"
 ```
 
 Использование конвейеров не обязательно, и при желании их можно переписать следующим образом:
 
-```
+```shell
 {{ quote (unixEpoch (now)) }}
 ```
 
@@ -621,7 +621,7 @@ hello
 
 Пример комбинирования:
 
-```
+```shell
 {{ and (eq true true) (neq true false) (not (empty "hello")) }}
 ```
 
@@ -629,7 +629,7 @@ hello
 
 Ветвления `if/else` позволяют выполнять шаблонизацию только при выполнении/невыполнении определенных условий. Пример:
 
-```
+```shell
 {{ if $.Values.app.enabled }}
 # ...
 {{ end }}
@@ -653,7 +653,7 @@ hello
 
 Полный пример:
 
-```
+```shell
 {{ if eq $appName "backend" }}
 app: mybackend
 {{ else if eq $appName "frontend" }}
@@ -665,13 +665,13 @@ app: {{ $appName }}
 
 Простые ветвления можно реализовывать не только с `if/else`, но и с функцией `ternary`. Например, следующее выражение с `ternary`:
 
-```
+```shell
 {{ ternary "mybackend" $appName (eq $appName "backend") }}
 ```
 
 ... аналогично приведенной ниже конструкции `if/else`:
 
-```
+```shell
 {{ if eq $appName "backend" }}
 app: mybackend
 {{ else }}
@@ -685,7 +685,7 @@ app: {{ $appName }}
 
 Циклы `range` позволяют перебирать элементы списка и выполнять нужную шаблонизацию на каждой итерации:
 
-```
+```shell
 {{ range $urls }}
 {{ . }}
 {{ end }}
@@ -693,14 +693,14 @@ app: {{ $appName }}
 
 Результат:
 
-```
+```shell
 https://example.org
 https://sub.example.org
 ```
 
 Относительный контекст `.` всегда указывает на элемент списка, соответствующий текущей итерации, хотя указатель можно сохранить и в произвольную переменную:
 
-```
+```shell
 {{ range $elem := $urls }}
 {{ $elem }}
 {{ end }}
@@ -708,14 +708,14 @@ https://sub.example.org
 
 Результат будет таким же:
 
-```
+```shell
 https://example.org
 https://sub.example.org
 ```
 
 Получить индекс элемента в списке можно следующим образом:
 
-```
+```shell
 {{ range $i, $elem := $urls }}
 {{ $elem }} имеет индекс {{ $i }}
 {{ end }}
@@ -723,7 +723,7 @@ https://sub.example.org
 
 Результат:
 
-```
+```shell
 https://example.org имеет индекс 0
 https://sub.example.org имеет индекс 1
 ```
@@ -741,7 +741,7 @@ apps:
     image: node
 ```
 
-```
+```shell
 # templates/app.yaml:
 {{ range $.Values.apps }}
 {{ .image }}
@@ -750,14 +750,14 @@ apps:
 
 Результат:
 
-```
+```shell
 openjdk
 node
 ```
 
 Относительный контекст `.` всегда указывает на значение элемента словаря, соответствующего текущей итерации, при этом указатель можно сохранить и в произвольную переменную:
 
-```
+```shell
 {{ range $app := $.Values.apps }}
 {{ $app.image }}
 {{ end }}
@@ -765,14 +765,14 @@ node
 
 Результат будет таким же:
 
-```
+```shell
 openjdk
 node
 ```
 
 Получить ключ элемента словаря можно так:
 
-```
+```shell
 {{ range $appName, $app := $.Values.apps }}
 {{ $appName }}: {{ $app.image }}
 {{ end }}
@@ -789,7 +789,7 @@ frontend: node
 
 Специальное действие `continue` позволяет пропустить текущую итерацию цикла. В качестве примера пропустим итерацию для элемента `https://example.org`:
 
-```
+```shell
 {{ range $url := $urls }}
 {{ if eq $url "https://example.org" }}{{ continue }}{{ end }}
 {{ $url }}
@@ -798,7 +798,7 @@ frontend: node
 
 Специальное действие `break` позволяет не только пропустить текущую итерацию, но и прервать весь цикл:
 
-```
+```shell
 {{ range $url := $urls }}
 {{ if eq $url "https://example.org" }}{{ break }}{{ end }}
 {{ $url }}
@@ -813,32 +813,32 @@ frontend: node
 
 Пример использования:
 
-```
+```shell
 {{ $.Values.mykey }}
 ```
 
 Результат:
 
-```
+```shell
 myvalue
 ```
 
 К корневому контексту можно добавлять произвольные ключи/значения, которые также станут доступны из любого места файла-шаблона:
 
-```
+```shell
 {{ $_ := set $ "mykey" "myvalue"}}
 {{ $.mykey }}
 ```
 
 Результат:
 
-```
+```shell
 myvalue
 ```
 
 Корневой контекст остаётся неизменным даже в блоках, изменяющих относительный контекст (исключение — `define`):
 
-```
+```shell
 {{ with $.Values.backend }}
 - command: {{ .command }}
   image: {{ $.Values.werf.image.backend }}
@@ -847,13 +847,13 @@ myvalue
 
 Некоторые функции вроде `tpl` или `include` могут терять корневой контекст. Для сохранения доступа к корневому контексту многим из них можно передать корневой контекст аргументом:
 
-```
+```shell
 {{ tpl "{{ .Values.mykey }}" $ }}
 ```
 
 Результат:
 
-```
+```shell
 myvalue
 ```
 
@@ -863,7 +863,7 @@ myvalue
 
 Некоторые блоки и функции могут менять относительный контекст. В примере ниже в первой строке относительный контекст указывает на корневой контекст `$`, а во второй строке — уже на `$.Values.containers`:
 
-```
+```shell
 {{ range .Values.containers }}
 {{ . }}
 {{ end }}
@@ -871,7 +871,7 @@ myvalue
 
 Для смены относительного контекста можно использовать блок `with`:
 
-```
+```shell
 {{ with $.Values.app }}
 image: {{ .image }}
 {{ end }}
@@ -883,7 +883,7 @@ image: {{ .image }}
 
 Для переиспользования шаблонизации объявите *именованные шаблоны* в блоках `define` в файлах `templates/_*.tpl`:
 
-```
+```shell
 # templates/_helpers.tpl:
 {{ define "labels" }}
 app: myapp
@@ -893,7 +893,7 @@ team: alpha
 
 Далее подставляйте именованные шаблоны в файлы `templates/*.(yaml|tpl)` функцией `include`:
 
-```
+```shell
 # templates/deployment.yaml:
 apiVersion: apps/v1
 kind: Deployment
@@ -928,7 +928,7 @@ spec:
 
 Имя именованного шаблона для функции `include` может быть динамическим:
 
-```
+```shell
 {{ include (printf "%s.labels" $prefix) nil }}
 ```
 
@@ -938,11 +938,11 @@ spec:
 
 Функция `include`, подставляющая именованные шаблоны, принимает один произвольный аргумент. Этот аргумент можно использовать для параметризации именованного шаблона, где этот аргумент станет относительным контекстом `.`:
 
-```
+```shell
 {{ include "labels" "myapp" }}
 ```
 
-```
+```shell
 {{ define "labels" }}
 app: {{ . }}
 {{ end }}
@@ -956,11 +956,11 @@ app: myapp
 
 Для передачи сразу нескольких аргументов используйте список с несколькими аргументами:
 
-```
+```shell
 {{ include "labels" (list "myapp" "alpha") }}
 ```
 
-```
+```shell
 {{ define "labels" }}
 app: {{ index . 0 }}
 team: {{ index . 1 }}
@@ -969,11 +969,11 @@ team: {{ index . 1 }}
 
 ... или словарь:
 
-```
+```shell
 {{ include "labels" (dict "app" "myapp" "team" "alpha") }}
 ```
 
-```
+```shell
 {{ define "labels" }}
 app: {{ .app }}
 team: {{ .team }}
@@ -982,12 +982,12 @@ team: {{ .team }}
 
 Необязательные позиционные аргументы можно реализовать так:
 
-```
+```shell
 {{ include "labels" (list "myapp") }}
 {{ include "labels" (list "myapp" "alpha") }}
 ```
 
-```
+```shell
 {{ define "labels" }}
 app: {{ index . 0 }}
 {{ if gt (len .) 1 }}
@@ -998,12 +998,12 @@ team: {{ index . 1 }}
 
 А необязательные непозиционные аргументы — так:
 
-```
+```shell
 {{ include "labels" (dict "app" "myapp") }}
 {{ include "labels" (dict "team" "alpha" "app" "myapp") }}
 ```
 
-```
+```shell
 {{ define "labels" }}
 app: {{ .app }}
 {{ if hasKey . "team" }}
@@ -1014,7 +1014,7 @@ team: {{ .team }}
 
 Именованному шаблону, не требующему параметризации, просто передайте `nil`:
 
-```
+```shell
 {{ include "labels" nil }}
 ```
 
@@ -1022,20 +1022,20 @@ team: {{ .team }}
 
 Функция `include`, подставляющая именованный шаблон, **всегда возвращает только текст**. Для возврата структурированных данных нужно *десериализовать* результат выполнения `include` с помощью функции `fromYaml`:
 
-```
+```shell
 {{ define "commonLabels" }}
 app: myapp
 {{ end }}
 ```
 
-```
+```shell
 {{ $labels := include "commonLabels" nil | fromYaml }}
 {{ $labels.app }}
 ```
 
 Результат:
 
-```
+```shell
 myapp
 ```
 
@@ -1047,7 +1047,7 @@ myapp
 
 Объявленные в `templates/_*.tpl` именованные шаблоны теряют доступ к корневому и относительному контекстам файла, в который они включаются функцией `include`. Исправить это можно, передав корневой и/или относительный контекст в виде аргументов `include`:
 
-```
+```shell
 {{ include "labels" $ }}
 {{ include "labels" . }}
 {{ include "labels" (list $ .) }}
@@ -1058,7 +1058,7 @@ myapp
 
 В блоках `define` тоже можно использовать функцию `include` для включения именованных шаблонов:
 
-```
+```shell
 {{ define "doSomething" }}
 {{ include "doSomethingElse" . }}
 {{ end }}
@@ -1066,7 +1066,7 @@ myapp
 
 Через `include` можно вызвать даже тот именованный шаблон, из которого и происходит вызов, т. е. вызвать его рекурсивно:
 
-```
+```shell
 {{ define "doRecursively" }}
 {{ if ... }}
 {{ include "doRecursively" . }}
@@ -1086,26 +1086,26 @@ appName: "myapp"
 deploymentName: "{{ .Values.appName }}-deployment"
 ```
 
-```
+```shell
 # templates/app.yaml:
 {{ tpl $.Values.deploymentName $ }}
 ```
 
 Результат:
 
-```
+```shell
 myapp-deployment
 ```
 
 Пример шаблонизации произвольных файлов, которые сами по себе не поддерживают Helm-шаблонизацию:
 
-```
+```shell
 {{ tpl ($.Files.Get "nginx.conf") $ }}
 ```
 
 Для передачи дополнительных аргументов в функцию `tpl` можно добавить аргументы как новые ключи корневого контекста:
 
-```
+```shell
 {{ $_ := set $ "myarg" "myvalue"}}
 {{ tpl "{{ $.myarg }}" $ }}
 ```
@@ -1114,7 +1114,7 @@ myapp-deployment
 
 Используйте функцию `nindent` для выставления отступов:
 
-```
+```shell
        containers: {{ .Values.app.containers | nindent 6 }}
 ```
 
@@ -1128,7 +1128,7 @@ myapp-deployment
 
 Пример комбинации с другими данными:
 
-```
+```shell
        containers:
        {{ .Values.app.containers | nindent 6 }}
        - name: frontend
@@ -1147,13 +1147,13 @@ myapp-deployment
 
 Используйте `-` после `{{` и/или до `}}` для удаления лишних пробелов до и/или после результата выполнения действия, например:
 
-```
+```shell
   {{- "hello" -}} {{ "world" }}
 ```
 
 Результат:
 
-```
+```shell
 helloworld
 ```
 
@@ -1165,14 +1165,14 @@ helloworld
 
 Комментарии шаблонизации скрываются при формировании манифестов:
 
-```
+```shell
 {{ /* Этот комментарий пропадёт */ }}
 app: myApp
 ```
 
 Комментарии могут быть многострочными:
 
-```
+```shell
 {{ /*
 Hello
 World
@@ -1181,7 +1181,7 @@ World
 
 Шаблоны в них игнорируются:
 
-```
+```shell
 {{ /*
 {{ print "Эта шаблонизация игнорируется" }}
 /* }}
@@ -1205,7 +1205,7 @@ app: myApp
 
 Шаблоны в них выполняются:
 
-```
+```shell
 # {{ print "Эта шаблонизация выполняется" }}
 ```
 
@@ -1215,25 +1215,25 @@ app: myApp
 
 Отобразить содержимое переменной:
 
-```
+```shell
 output: {{ $appName | toYaml }}
 ```
 
 Отобразить содержимое переменной-списка или словаря:
 
-```
+```shell
 output: {{ $dictOrList | toYaml | nindent 2 }}
 ```
 
 Отобразить тип данных у переменной:
 
-```
+```shell
 output: {{ kindOf $myvar }}
 ```
 
 Отобразить произвольную строку, остановив дальнейшее формирование шаблонов:
 
-```
+```shell
 {{ fail (printf "Тип данных: %s" (kindOf $myvar)) }}
 ```
 
@@ -1250,7 +1250,7 @@ output: {{ kindOf $myvar }}
 myparam: myvalue
 ```
 
-```
+```shell
 # templates/example.yaml:
 {{ $.Values.myparam }}
 ```
@@ -1269,12 +1269,12 @@ myparams:
 - value: original
 ```
 
-```
+```shell
 # templates/example.yaml:
 {{ (index $.Values.myparams 0).value }}
 ```
 
-```
+```shell
 d8 dk render --set myparams[0].value=overriden
 ```
 
@@ -1325,14 +1325,14 @@ overriden
 myparam: myvalue
 ```
 
-```
+```shell
 # templates/example.yaml:
 {{ $.Values.myparam }}
 ```
 
 Результат:
 
-```
+```shell
 myvalue
 ```
 
@@ -1381,7 +1381,7 @@ d8 dk render --secret-values .helm/secret-values-production.yaml  # или WERF_
 
 ... или set-файлами:
 
-```
+```shell
 # myparam.txt:
 overriden
 ```
@@ -1392,7 +1392,7 @@ d8 dk render --set-file myparam=myparam.txt  # или WERF_SET_FILE_PROD=myparam
 
 Результат везде тот же:
 
-```
+```shell
 overriden
 ```
 
@@ -1420,14 +1420,14 @@ mychild:
 myparam: original
 ```
 
-```
+```shell
 # charts/mychild/templates/example.yaml:
 {{ $.Values.myparam }}
 ```
 
 Результат:
 
-```
+```shell
 overriden
 ```
 
@@ -1481,7 +1481,7 @@ d8 dk render --secret-values .helm/secret-values-production.yaml  # или WERF_
 
 ... или set-файлами:
 
-```
+```shell
 # mychild-myparam.txt:
 overriden
 ```
@@ -1513,7 +1513,7 @@ d8 dk render
 
 Результат везде тот же:
 
-```
+```shell
 overriden
 ```
 
@@ -1541,14 +1541,14 @@ myparam: original
 myparam: overriden
 ```
 
-```
+```shell
 # templates/example.yaml:
 {{ $.Values.myparam }}
 ```
 
 Результат:
 
-```
+```shell
 overriden
 ```
 
@@ -1572,17 +1572,17 @@ global:
   myparam: myvalue
 ```
 
-```
+```shell
 # templates/example.yaml:
 myparent: {{ $.Values.global.myparam }}
 ```
 
-```
+```shell
 # charts/mychild1/templates/example.yaml:
 mychild1: {{ $.Values.global.myparam }}
 ```
 
-```
+```shell
 # charts/mychild2/templates/example.yaml:
 mychild2: {{ $.Values.global.myparam }}
 ```
@@ -1613,14 +1613,14 @@ plainParam: plainValue
 secretParam: 1000625c4f1d874f0ab853bf1db4e438ad6f054526e5dcf4fc8c10e551174904e6d0
 ```
 
-```
+```shell
 {{ $.Values.plainParam }}
 {{ $.Values.secretParam }}
 ```
 
 Результат:
 
-```
+```shell
 plainValue
 secretValue
 ```
@@ -1678,7 +1678,7 @@ werf:
 
 Пример использования:
 
-```
+```shell
 image: {{ $.Values.werf.image.backend }}
 ```
 
@@ -1699,7 +1699,7 @@ dependencies:
     child: werf
 ```
 
-```
+```shell
 # .helm/charts/backend/templates/example.yaml:
 image: {{ $.Values.werf.image.backend }}
 ```
@@ -1739,14 +1739,14 @@ werf:
 
 Пример использования:
 
-```
+```shell
 {{ $.Release.Namespace }}
 {{ $.Values.werf.env }}
 ```
 
 Результат:
 
-```
+```shell
 myapp-production
 production
 ```
@@ -1762,7 +1762,7 @@ dependencies:
     child: werf
 ```
 
-```
+```shell
 # .helm/charts/backend/templates/example.yaml:
 {{ $.Values.werf.env }}
 ```
@@ -1804,13 +1804,13 @@ Dependencies:
 
 Пример использования:
 
-```
+```shell
 {{ $.Chart.Name }}
 ```
 
 Результат:
 
-```
+```shell
 mychart
 ```
 
@@ -1827,13 +1827,13 @@ Name: mychart/templates/example.yaml
 
 Пример использования:
 
-```
+```shell
 {{ $.Template.Name }}
 ```
 
 Результат:
 
-```
+```shell
 mychart/templates/example.yaml
 ```
 
@@ -1855,13 +1855,13 @@ werf:
 
 Пример использования:
 
-```
+```shell
 {{ $.Values.werf.commit.hash }}
 ```
 
 Результат:
 
-```
+```shell
 1b28e6843a963c5bdb3579f6fc93317cc028051c
 ```
 
@@ -1876,7 +1876,7 @@ dependencies:
     child: werf
 ```
 
-```
+```shell
 # .helm/charts/backend/templates/example.yaml:
 {{ $.Values.werf.commit.hash }}
 ```
@@ -1912,14 +1912,14 @@ APIVersions:
 
 Пример использования:
 
-```
+```shell
 {{ $.Capabilities.KubeVersion.Version }}
 {{ $.Capabilities.APIVersions.Has "apps/v1" }}
 ```
 
 Результат:
 
-```
+```shell
 v1.20.0
 true
 ```
@@ -1939,7 +1939,7 @@ memory:
   production: 2G
 ```
 
-```
+```shell
 # .helm/templates/example.yaml:
 memory: {{ index $.Values.memory $.Values.werf.env }}
 ```
@@ -1965,14 +1965,14 @@ dependencies:
     child: werf
 ```
 
-```
+```shell
 # .helm/charts/child/templates/example.yaml:
 {{ $.Values.werf.env }}
 ```
 
 Результат:
 
-```
+```shell
 production
 ```
 
@@ -2084,7 +2084,7 @@ spec:
     kind: CronTab
 ```
 
-```
+```shell
 # .helm/templates/crontab.yaml:
 apiVersion: example.org/v1
 kind: CronTab
@@ -2142,7 +2142,7 @@ d8 dk converge
 
 Для изменения порядка развертывания ресурсов можно создать *новые группы ресурсов* через задание ресурсам *веса*, отличного от веса по умолчанию `0`. Все ресурсы с одинаковым весом объединяются в группы, а затем группы ресурсов развертываются по очереди, от группы с меньшим весом к большему, например:
 
-```
+```shell
 # .helm/templates/example.yaml:
 apiVersion: apps/v1
 kind: StatefulSet
@@ -2185,7 +2185,7 @@ d8 dk converge
 
 Для развертывания определенных ресурсов только перед или после установки, обновления, отката или удаления релиза преобразуйте ресурс в *хук* аннотацией `helm.sh/hook`, например:
 
-```
+```shell
 # .helm/templates/example.yaml:
 apiVersion: batch/v1
 kind: Job
@@ -2227,7 +2227,7 @@ d8 dk converge
 
 Для задания хукам порядка развертывания присвойте им разные *веса* (по умолчанию — `0`), чтобы хуки развертывались по очереди, от хука с меньшим весом к большему, например:
 
-```
+```shell
 # .helm/templates/example.yaml:
 apiVersion: batch/v1
 kind: Job
@@ -2274,7 +2274,7 @@ d8 dk converge
 
 Развертываемым в текущем релизе ресурсам могут требоваться ресурсы, которые не принадлежат текущему релизу. Deckhouse Delivery Kit может дожидаться готовности этих внешних ресурсов благодаря аннотации `<name>.external-dependency.werf.io/resource`, например:
 
-```
+```shell
 # .helm/templates/example.yaml:
 apiVersion: apps/v1
 kind: Deployment
@@ -2293,7 +2293,7 @@ d8 dk converge
 
 А так можно ожидать готовности сразу нескольких внешних ресурсов:
 
-```
+```shell
 # .helm/templates/example.yaml:
 apiVersion: apps/v1
 kind: Deployment
@@ -2307,7 +2307,7 @@ metadata:
 
 По умолчанию Deckhouse Delivery Kit ищет внешний ресурс в Namespace релиза (если, конечно, ресурс не кластерный). Namespace внешнего ресурса можно изменить аннотацией `<name>.external-dependency.werf.io/namespace`:
 
-```
+```shell
 # .helm/templates/example.yaml:
 apiVersion: apps/v1
 kind: Deployment
@@ -2394,7 +2394,7 @@ d8 dk bundle apply --tag latest --release myapp --namespace myapp-production --r
 d8 dk build --repo example.org/mycompany/myapp
 ```
 
-```
+```shell
 d8 dk bundle publish --require-built-images --tag latest --repo example.org/mycompany/myapp
 ```
 
@@ -2444,7 +2444,7 @@ d8 dk bundle apply --tag latest --release myapp --namespace myapp-production --r
 d8 dk build --repo example.org/mycompany/myapp
 ```
 
-```
+```shell
 d8 dk bundle publish --require-built-images --tag latest --repo example.org/mycompany/myapp
 ```
 
@@ -2478,7 +2478,7 @@ kubectl apply -f manifests.yaml
 d8 dk build --repo example.org/mycompany/myapp
 ```
 
-```
+```shell
 d8 dk render --require-built-images --output manifests.yaml --repo example.org/mycompany/myapp
 ```
 
@@ -2520,7 +2520,7 @@ kubectl apply -f manifests.yaml
 d8 dk build --repo example.org/mycompany/myapp
 ```
 
-```
+```shell
 d8 dk bundle publish --require-built-images --tag latest --repo example.org/mycompany/myapp
 ```
 
@@ -2756,7 +2756,7 @@ d8 dk converge --release backend-production  # или $WERF_RELEASE=...
 
 Deckhouse Delivery Kit не позволяет развернуть новый ресурс релиза поверх уже существующего в кластере ресурса, если ресурс в кластере *не является частью текущего релиза*. Такое поведение предотвращает случайные обновления ресурсов, принадлежащих другому релизу или развернутых без Deckhouse Delivery Kit. Если все же попытаться это сделать, то отобразится следующая ошибка:
 
-```
+```shell
 Error: helm upgrade have failed: UPGRADE FAILED: rendered manifests contain a resource that already exists...
 ```
 
@@ -2801,4 +2801,3 @@ d8 dk converge \
   --env dev \
   --repo REPO
 ```
-
