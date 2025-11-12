@@ -1,4 +1,4 @@
-# Deckhouse Delivery Kit documentation
+# Deckhouse Delivery Kit documentation 
 
 This is the source for the Deckhouse Delivery Kit documentation website.  
 
@@ -14,3 +14,5 @@ To run locally:
 
 
 The project uses the [hugo-web-product-module](https://github.com/deckhouse/hugo-web-product-module).
+
+test
