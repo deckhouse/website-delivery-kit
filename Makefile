@@ -30,7 +30,7 @@ help:
 
 up:
 	which werf >/dev/null || source $(trdl use werf 2 beta)
-	werf compose up
+	werf compose up --dev
 
 serve:
 	$(HUGO) serve $(SERVE_FLAGS)

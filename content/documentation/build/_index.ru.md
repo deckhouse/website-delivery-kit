@@ -456,8 +456,7 @@ d8 dk build --repo REPO --add-custom-tag "%image%-latest"
 
 #### Dockerfile
 
-По умолчанию Dockerfile-образы кешируются одним образом в container registry. 
-
+По умолчанию Dockerfile-образы кешируются одним образом в container registry.
 Для включения послойного кеширования Dockerfile-инструкций в container registry необходимо использовать директиву `staged` в werf.yaml:
 
 ```yaml

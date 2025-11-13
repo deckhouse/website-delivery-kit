@@ -9,4 +9,3 @@ This is an Open Source project, and third-party contributions are warmly welcome
 - If you believe no preliminary discussion is required, submit your [PRs](https://github.com/deckhouse/website-delivery-kit/pulls) with your code changes straight away.
 
 P.S. The [maintainers list](https://github.com/deckhouse/website-delivery-kit/blob/main/MAINTAINERS.md) might also be helpful to reach our core developers.
-
