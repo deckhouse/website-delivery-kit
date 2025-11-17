@@ -106,7 +106,6 @@ languages:
     weight: 0
     baseURL: https://deckhouse.io/products/delivery-kit/
     params:
-      publicRootURL: https://deckhouse.io
       description: ""
   ru:
     disabled: false
@@ -116,5 +115,4 @@ languages:
     title: Deckhouse Delivery Kit
     baseURL: https://deckhouse.ru/products/delivery-kit/
     params:
-      publicRootURL: https://deckhouse.io
       description: ""
