@@ -74,6 +74,7 @@ jobs:
           cat > .htmltest.yml << EOF
           IgnoreURLs:
             - "example.com"
+            - "astralinux.ru"
             - "localhost"
             - "^/assets/"
             - "^/assets/js/"

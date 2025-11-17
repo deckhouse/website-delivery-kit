@@ -72,6 +72,8 @@ sitemap:
   priority: 0.75
 
 params:
+  # The same as in the /products/<APP>/ doc URL prefix
+  productCode: delivery-kit
   analytics:
     google: XXXX
     yandex: XXXX
@@ -79,7 +81,6 @@ params:
   github_repo: https://github.com/deckhouse/delivery-kit
   # Show "Edit this page" link
   showedit: true
-  remoteAssetURL: /includes/
 
   # Enable Lunr.js offline search
   offlineSearch: false
@@ -105,7 +106,6 @@ languages:
     weight: 0
     baseURL: https://deckhouse.io/products/delivery-kit/
     params:
-      publicRootURL: https://deckhouse.io
       description: ""
   ru:
     disabled: false
@@ -115,5 +115,4 @@ languages:
     title: Deckhouse Delivery Kit
     baseURL: https://deckhouse.ru/products/delivery-kit/
     params:
-      publicRootURL: https://deckhouse.io
       description: ""
