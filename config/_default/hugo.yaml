@@ -74,9 +74,6 @@ sitemap:
 params:
   # The same as in the /products/<APP>/ doc URL prefix
   productCode: delivery-kit
-  analytics:
-    google: XXXX
-    yandex: XXXX
   # GitHub repository link for editing a page and opening issues.
   github_repo: https://github.com/deckhouse/delivery-kit
   # Show "Edit this page" link
