@@ -1,7 +1,13 @@
 ---
 title: Документация Deckhouse Delivery Kit
+linkTitle: Документация
 weight: 10
 description: Documentation for the project, including guides, API references, and tutorials.
+params:
+  no_list: true
+cascade:
+  params:
+    simple_list: true
 ---
 
 {{< alert level="warning" >}}
