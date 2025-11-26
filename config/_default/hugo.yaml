@@ -56,14 +56,15 @@ markup:
     theme: default
 
 disableKinds:
-#- "404"
+- "404"
 - home
-#- robotsTXT
+- robotsTXT
 - RSS
 #- section
-#- sitemap
+- sitemap
 - taxonomy
 - term
+
 
 enableGitInfo: true
 
