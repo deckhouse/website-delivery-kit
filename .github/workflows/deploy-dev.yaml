@@ -1,6 +1,6 @@
 # WF for deploying to test/stage envs on PR label 'deploy/test' or 'deploy/stage'
 
-name: Deploy on label
+name: Deploy to dev environments
 
 on:
   pull_request_target:
@@ -20,6 +20,7 @@ permissions:
 
 jobs:
   deploy:
+    name: Deploy to ${{ github.event.label.name }}
     runs-on: ubuntu-latest
     if: >
       (github.event.label.name == 'deploy/test' || github.event.label.name == 'deploy/stage')
