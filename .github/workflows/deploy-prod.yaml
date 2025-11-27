@@ -110,6 +110,7 @@ jobs:
       - name: Deploy to ${{ steps.env.outputs.env }}
         id: deploy
         env:
+          WERF_VIRTUAL_MERGE: 0
           WERF_REPO: ${{ steps.check_rw_registry.outputs.web_registry_path }}
           WERF_SECONDARY_REPO: ${{ steps.check_dev_registry.outputs.web_registry_path }}
           WERF_ENV: ${{ steps.env.outputs.env }}
