@@ -92,6 +92,18 @@ jobs:
           password: ${{ steps.secrets.outputs.DECKHOUSE_REGISTRY_PASSWORD }}
           logout: false
 
+      - name: Validate deployment prerequisites
+        run: |
+          if [ -z "${{ steps.check_rw_registry.outputs.web_registry_path }}" ]; then
+            echo "::error::Production registry credentials are missing. Cannot deploy."
+            exit 1
+          fi
+          if [ -z "${{ steps.secrets.outputs.KUBECONFIG_BASE64_PROD }}" ]; then
+            echo "::error::Production kubeconfig is missing. Cannot deploy."
+            exit 1
+          fi
+          echo "✓ All prerequisites validated"
+
       - name: Install werf
         uses: werf/actions/install@v2
 

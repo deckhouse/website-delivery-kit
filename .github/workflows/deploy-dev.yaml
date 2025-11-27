@@ -9,7 +9,7 @@ on:
 
 # Cancel in-progress jobs for the same tag/branch.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}-${{ replace(github.event.label.name, '/', '-') }}-deploy
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.label.name }}-deploy
   cancel-in-progress: true
 
 permissions:
@@ -97,6 +97,18 @@ jobs:
           password: ${{ steps.secrets.outputs.DECKHOUSE_DEV_REGISTRY_PASSWORD }}
           logout: false
 
+      - name: Validate deployment prerequisites
+        run: |
+          if [ -z "${{ steps.check_dev_registry.outputs.web_registry_path }}" ]; then
+            echo "::error::Dev registry credentials are missing. Cannot deploy."
+            exit 1
+          fi
+          if [ -z "${{ steps.secrets.outputs.KUBECONFIG_BASE64_DEV }}" ]; then
+            echo "::error::Dev kubeconfig is missing. Cannot deploy."
+            exit 1
+          fi
+          echo "✓ All prerequisites validated"
+
       - name: Install werf
         uses: werf/actions/install@v2
 
@@ -113,13 +125,17 @@ jobs:
           werf converge
 
       - name: Update comment - deployment succeeded
-        if: success()
+        if: success() && steps.comment.outputs.result
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const env = '${{ steps.env.outputs.env }}';
             const commentId = ${{ steps.comment.outputs.result }};
+            if (!commentId) {
+              console.log('No comment ID available, skipping update');
+              return;
+            }
             const repoName = context.repo.repo;
             const appName = repoName.startsWith('website-') ? repoName.replace(/^website-/, '') : repoName;
             const urlEn = `https://deckhouse.${env}.flant.com/products/${appName}/documentation/`;
@@ -134,13 +150,17 @@ jobs:
             console.log(`Updated comment ${commentId} with success status`);
 
       - name: Update comment - deployment failed
-        if: failure()
+        if: failure() && steps.comment.outputs.result
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const env = '${{ steps.env.outputs.env }}';
             const commentId = ${{ steps.comment.outputs.result }};
+            if (!commentId) {
+              console.log('No comment ID available, skipping update');
+              return;
+            }
       
             const jobs = await github.rest.actions.listJobsForWorkflowRun({
               owner: context.repo.owner,
