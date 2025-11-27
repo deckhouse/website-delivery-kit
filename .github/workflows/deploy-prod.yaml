@@ -52,6 +52,9 @@ jobs:
             projects/data/101ceaca-97cd-462f-aed5-070d9b9de175/dev-registry/writetoken password | DECKHOUSE_DEV_REGISTRY_PASSWORD ;
             projects/data/101ceaca-97cd-462f-aed5-070d9b9de175/registry-write/demotoken login | DECKHOUSE_REGISTRY_USER ;
             projects/data/101ceaca-97cd-462f-aed5-070d9b9de175/registry-write/demotoken password | DECKHOUSE_REGISTRY_PASSWORD ;
+            projects/data/6db2f1ee-9b6f-4f4f-8381-2fb43060478a/github/registry_host DECKHOUSE_REGISTRY_READ_HOST | DECKHOUSE_REGISTRY_READ_HOST ;
+            projects/data/6db2f1ee-9b6f-4f4f-8381-2fb43060478a/github/registry_read_token login | DECKHOUSE_REGISTRY_READ_USER ;
+            projects/data/6db2f1ee-9b6f-4f4f-8381-2fb43060478a/github/registry_read_token password | DECKHOUSE_REGISTRY_READ_PASSWORD ;
             projects/data/6db2f1ee-9b6f-4f4f-8381-2fb43060478a/github/documentation_deploy_secret KUBECONFIG_BASE64_PROD_25 | KUBECONFIG_BASE64_PROD ;
 
       - name: Check dev registry credentials
@@ -92,31 +95,48 @@ jobs:
           password: ${{ steps.secrets.outputs.DECKHOUSE_REGISTRY_PASSWORD }}
           logout: false
 
-      - name: Validate deployment prerequisites
+      - name: Check readonly registry credentials
+        id: check_readonly_registry
+        env:
+          HOST: ${{ steps.secrets.outputs.DECKHOUSE_REGISTRY_READ_HOST }}
         run: |
-          if [ -z "${{ steps.check_rw_registry.outputs.web_registry_path }}" ]; then
-            echo "::error::Production registry credentials are missing. Cannot deploy."
-            exit 1
+          if [[ -n $HOST ]]; then
+            echo "has_credentials=true" >> $GITHUB_OUTPUT
+            echo "web_registry_path=${{ steps.secrets.outputs.DECKHOUSE_REGISTRY_READ_HOST }}/deckhouse/site" >> $GITHUB_OUTPUT
           fi
-          if [ -z "${{ steps.secrets.outputs.KUBECONFIG_BASE64_PROD }}" ]; then
-            echo "::error::Production kubeconfig is missing. Cannot deploy."
-            exit 1
-          fi
-          echo "✓ All prerequisites validated"
 
-      - name: Install werf
-        uses: werf/actions/install@v2
+      - name: Login to readonly registry
+        uses: docker/login-action@v3
+        if: ${{ steps.check_readonly_registry.outputs.has_credentials == 'true' }}
+        with:
+          registry: ${{ steps.secrets.outputs.DECKHOUSE_REGISTRY_READ_HOST }}
+          username: ${{ steps.secrets.outputs.DECKHOUSE_REGISTRY_READ_USER }}
+          password: ${{ steps.secrets.outputs.DECKHOUSE_REGISTRY_READ_PASSWORD }}
+          logout: false
 
-      - name: Deploy to ${{ steps.env.outputs.env }}
-        id: deploy
+      - name: Build
+        id: build
+        uses: werf/actions/build@v2
+        with:
+          channel: beta
+          kube-config-base64-data: ${{ steps.secrets.outputs.KUBECONFIG_BASE64_PROD }}
+          env: ${{ steps.env.outputs.env }}
         env:
           WERF_VIRTUAL_MERGE: 0
           WERF_REPO: ${{ steps.check_rw_registry.outputs.web_registry_path }}
           WERF_SECONDARY_REPO: ${{ steps.check_dev_registry.outputs.web_registry_path }}
-          WERF_ENV: ${{ steps.env.outputs.env }}
-          WERF_KUBE_CONFIG_BASE64: ${{ steps.secrets.outputs.KUBECONFIG_BASE64_PROD }}
           WERF_SET_URL: "global.url=deckhouse.io"
           WERF_SET_URL_RU: "global.url_ru=deckhouse.ru"
 
-        run: |
-          werf converge
+      - name: Deploy to ${{ steps.env.outputs.env }}
+        id: deploy
+        uses: werf/actions/converge@v2
+        with:
+          channel: beta
+          kube-config-base64-data: ${{ steps.secrets.outputs.KUBECONFIG_BASE64_PROD }}
+          env: ${{ steps.env.outputs.env }}
+        env:
+          WERF_VIRTUAL_MERGE: 0
+          WERF_REPO: ${{ steps.check_readonly_registry.outputs.web_registry_path }}
+          WERF_SET_URL: "global.url=deckhouse.io"
+          WERF_SET_URL_RU: "global.url_ru=deckhouse.ru"
