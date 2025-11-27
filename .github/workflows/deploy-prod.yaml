@@ -54,8 +54,8 @@ jobs:
             projects/data/6db2f1ee-9b6f-4f4f-8381-2fb43060478a/github/documentation_deploy_secret KUBECONFIG_BASE64_PROD_25 | KUBECONFIG_BASE64_PROD ;
             projects/data/101ceaca-97cd-462f-aed5-070d9b9de175/dev-registry/writetoken login | DECKHOUSE_DEV_REGISTRY_USER ;
             projects/data/101ceaca-97cd-462f-aed5-070d9b9de175/dev-registry/writetoken password | DECKHOUSE_DEV_REGISTRY_PASSWORD ;
-            TODO login | DECKHOUSE_REGISTRY_USER ;
-            TODO password | DECKHOUSE_REGISTRY_PASSWORD ;
+            projects/data/101ceaca-97cd-462f-aed5-070d9b9de175/registry-write/demotoken login | DECKHOUSE_REGISTRY_USER ;
+            projects/data/101ceaca-97cd-462f-aed5-070d9b9de175/registry-write/demotoken password | DECKHOUSE_REGISTRY_PASSWORD ;
 
       - name: Check dev registry credentials
         id: check_dev_registry
