@@ -2,15 +2,14 @@
 
 name: Deploy to production
 
-# On every push to main branch.
 on:
-  push:
-    branches:
-      - 'main'
+  pull_request:
+    types:
+      - closed
 
 # Cancel in-progress jobs for the same tag/branch.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.label.name }}-deploy
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:
@@ -20,12 +19,15 @@ permissions:
 jobs:
   deploy:
     runs-on: "regular"
-    if: ${{ github.event.label.name == 'deploy/test' || github.event.label.name == 'deploy/stage' }}
+    if: >
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'main' &&
+      startsWith(github.repository, 'deckhouse/')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.merge_commit_sha || github.sha }}
           submodules: recursive
           fetch-depth: 0
 
@@ -89,6 +91,18 @@ jobs:
           username: ${{ steps.secrets.outputs.DECKHOUSE_REGISTRY_USER }}
           password: ${{ steps.secrets.outputs.DECKHOUSE_REGISTRY_PASSWORD }}
           logout: false
+
+      - name: Validate deployment prerequisites
+        run: |
+          if [ -z "${{ steps.check_rw_registry.outputs.web_registry_path }}" ]; then
+            echo "::error::Production registry credentials are missing. Cannot deploy."
+            exit 1
+          fi
+          if [ -z "${{ steps.secrets.outputs.KUBECONFIG_BASE64_PROD }}" ]; then
+            echo "::error::Production kubeconfig is missing. Cannot deploy."
+            exit 1
+          fi
+          echo "✓ All prerequisites validated"
 
       - name: Install werf
         uses: werf/actions/install@v2
