@@ -21,7 +21,8 @@ jobs:
     runs-on: "regular"
     if: >
       github.event.pull_request.merged == true &&
-      github.event.pull_request.base.ref == 'main'
+      github.event.pull_request.base.ref == 'main' &&
+      startsWith(github.repository, 'deckhouse/')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

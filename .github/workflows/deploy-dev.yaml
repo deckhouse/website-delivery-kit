@@ -9,7 +9,7 @@ on:
 
 # Cancel in-progress jobs for the same tag/branch.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.label.name }}-deploy
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ replace(github.event.label.name, '/', '-') }}-deploy
   cancel-in-progress: true
 
 permissions:
@@ -21,7 +21,9 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.label.name == 'deploy/test' || github.event.label.name == 'deploy/stage' }}
+    if: >
+      (github.event.label.name == 'deploy/test' || github.event.label.name == 'deploy/stage')
+      && startsWith(github.repository, 'deckhouse/')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -50,8 +52,8 @@ jobs:
               issue_number: context.payload.pull_request.number,
               body: `## 🚀 Deployment Started\n\n**Environment:** \`${env}\`\n\n_This comment will be updated with deployment status._`
             });
-            core.setOutput('comment_id', comment.data.id);
             console.log(`Created comment: ${comment.data.id}`);
+            return comment.data.id;
 
       - name: Validate that Environment variable set
         run: |
@@ -117,12 +119,12 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const env = '${{ steps.env.outputs.env }}';
-            const commentId = ${{ steps.comment.outputs.comment_id }};
+            const commentId = ${{ steps.comment.outputs.result }};
             const repoName = context.repo.repo;
             const appName = repoName.startsWith('website-') ? repoName.replace(/^website-/, '') : repoName;
             const urlEn = `https://deckhouse.${env}.flant.com/products/${appName}/documentation/`;
             const urlRu = `https://deckhouse.ru.${env}.flant.com/products/${appName}/documentation/`;
-            
+      
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -138,25 +140,24 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const env = '${{ steps.env.outputs.env }}';
-            const commentId = ${{ steps.comment.outputs.comment_id }};
-            
-            // Get the job ID for the failed job
+            const commentId = ${{ steps.comment.outputs.result }};
+      
             const jobs = await github.rest.actions.listJobsForWorkflowRun({
               owner: context.repo.owner,
               repo: context.repo.repo,
               run_id: context.runId
             });
-            
+      
             const job = jobs.data.jobs.find(j => j.name === 'deploy');
             const jobId = job ? job.id : null;
-            
+      
             let logsUrl;
             if (jobId) {
               logsUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}/job/${jobId}`;
             } else {
               logsUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             }
-            
+      
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
