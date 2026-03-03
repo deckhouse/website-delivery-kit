@@ -5,6 +5,9 @@ description: Documentation for the project, including guides, API references, an
 weight: 10
 params:
   no_list: true
+outputs:
+  - HTML
+  - search
 cascade:
   params:
     simple_list: true
