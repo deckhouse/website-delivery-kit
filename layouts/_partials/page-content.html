@@ -1,0 +1,13 @@
+<div class="docs">
+    <div class="docs__wrap-title">
+        <h1 class="docs__title">{{ .Title }}</h1>
+    </div>
+    <div class="post-content">
+        {{.Content}}
+        {{ partial "page-navigation" . }}
+        {{ partial "related-links" . }}
+    </div>
+   {{ if .IsSection }}
+     {{ partial "section-index.html" . }}
+   {{ end }}
+</div>

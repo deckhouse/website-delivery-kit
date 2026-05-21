@@ -1,0 +1,30 @@
+{{- if or .PrevInSection .NextInSection }}
+<div class="page-navigation">
+  <div class="page-navigation__container">
+    {{- with .NextInSection }}
+    <div class="page-navigation__prev">
+      <a href="{{ .RelPermalink }}" class="page-navigation__link page-navigation__link--prev">
+        <div class="page-navigation__arrow">←</div>
+        <div class="page-navigation__content">
+          <div class="page-navigation__title">{{ .LinkTitle | default .Title }}</div>
+        </div>
+      </a>
+    </div>
+    {{- else }}
+    <div class="page-navigation__prev page-navigation__empty"></div>
+    {{- end }}
+    {{- with .PrevInSection }}
+    <div class="page-navigation__next">
+      <a href="{{ .RelPermalink }}" class="page-navigation__link page-navigation__link--next">
+        <div class="page-navigation__content">
+          <div class="page-navigation__title">{{ .LinkTitle | default .Title }}</div>
+        </div>
+        <div class="page-navigation__arrow">→</div>
+      </a>
+    </div>
+    {{- else }}
+    <div class="page-navigation__next page-navigation__empty"></div>
+    {{- end }}
+  </div>
+</div>
+{{- end }}
