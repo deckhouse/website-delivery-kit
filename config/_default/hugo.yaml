@@ -98,8 +98,6 @@ module:
 languages:
   en:
     disabled: false
-    languageDirection: ""
-    languageName: ""
     title: Deckhouse Delivery Kit
     weight: 0
     baseURL: https://deckhouse.io/products/delivery-kit/
@@ -107,8 +105,6 @@ languages:
       description: ""
   ru:
     disabled: false
-    languageDirection: ""
-    languageName: ""
     weight: 1
     title: Deckhouse Delivery Kit
     baseURL: https://deckhouse.ru/products/delivery-kit/
