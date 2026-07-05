@@ -67,6 +67,9 @@ params:
   # Enable Lunr.js offline search
   offlineSearch: true
 
+  # Enable PDF/DOCX documentation exports (generated in CI, downloadable from sidebar).
+  pdf: true
+
   # Global relevant links.
   links:
 
@@ -103,6 +106,7 @@ languages:
     baseURL: https://deckhouse.io/products/delivery-kit/
     params:
       description: ""
+      pdfTitle: "Deckhouse Delivery Kit Documentation"
   ru:
     disabled: false
     weight: 1
@@ -110,3 +114,4 @@ languages:
     baseURL: https://deckhouse.ru/products/delivery-kit/
     params:
       description: ""
+      pdfTitle: "Документация Deckhouse Delivery Kit"
