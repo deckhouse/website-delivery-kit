@@ -8,13 +8,10 @@ params:
 outputs:
   - HTML
   - search
-  - print
 cascade:
   params:
     simple_list: true
 ---
-
-{{< downloads >}}
 
 {{< alert level="warning" >}}
 Функциональность Deckhouse Delivery Kit доступна только если у вас есть лицензия на любую коммерческую версию Deckhouse Kubernetes Platform.
