@@ -45,7 +45,7 @@ disableKinds:
 - robotsTXT
 - RSS
 #- section
-- sitemap
+#- sitemap
 - taxonomy
 - term
 
@@ -66,6 +66,11 @@ params:
 
   # Enable Lunr.js offline search
   offlineSearch: true
+
+  # Optional one-sentence summary for /{lang}/documentation/llms.txt (AI agents).
+  # Default: "Documentation for <site.Title>."
+  # llms:
+  #   summary: "..."
 
   # Global relevant links.
   links:
