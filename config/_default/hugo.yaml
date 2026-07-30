@@ -52,6 +52,10 @@ disableKinds:
 
 enableGitInfo: true
 
+outputs:
+  page: [HTML, markdown]
+  section: [HTML, markdown]
+
 sitemap:
   filename: "sitemap.xml"
   priority: 0.75
