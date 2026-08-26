@@ -1,0 +1,164 @@
+{{- $os := .Get "os" -}}
+{{- $arch := .Get "arch" | default "x86-64" -}}
+{{- $osSlug := index (dict "Linux" "linux" "macOS" "darwin" "Windows" "windows") $os -}}
+{{- $archSlug := index (dict "x86-64" "amd64" "ARM64" "arm64") $arch -}}
+{{- if not $osSlug -}}
+  {{- errorf "d8-cli-install: unsupported os %q (%s)" $os .Position -}}
+{{- end -}}
+{{- if not $archSlug -}}
+  {{- errorf "d8-cli-install: unsupported arch %q (%s)" $arch .Position -}}
+{{- end -}}
+{{- $version := hugo.Data.d8_version.d8CliVersion -}}
+{{- if not $version -}}
+  {{- errorf "d8-cli-install: d8CliVersion is not set in data/d8_version.yaml (%s)" .Position -}}
+{{- end -}}
+{{- $platform := printf "%s-%s" $osSlug $archSlug -}}
+{{- $archive := printf "d8-%s-%s.tar.gz" $version $platform -}}
+{{- $host := cond (eq .Page.Language.Lang "ru") "https://deckhouse.ru" "https://deckhouse.io" -}}
+{{- $url := printf "%s/downloads/deckhouse-cli/%s/%s" $host $version $archive -}}
+{{- $toolsURL := "/products/kubernetes-platform/documentation/v1/modules/deckhouse-tools/" -}}
+{{- $globalURL := "/products/kubernetes-platform/documentation/v1/reference/api/global.html#parameters-modules-publicdomaintemplate" -}}
+{{- $alert := "" -}}
+{{ .Page.RenderString $alert }}
+
+{{- if eq .Page.Language.Lang "ru" -}}
+{{- if eq $os "Windows" }}
+1. Скачайте [архив для {{ $os }} {{ $arch }}]({{ $url }}) удобным для вас способом.
+
+   - **Из вашего кластера**:
+
+      1. Включите модуль [deckhouse-tools]({{ $toolsURL }});
+      1. Откройте веб-интерфейс со ссылками на скачивание. Адрес веб-интерфейса формируется в соответствии с шаблоном [publicDomainTemplate]({{ $globalURL }}) глобального параметра конфигурации Deckhouse (ключ `%s` заменяется на `tools`).
+
+         Например, если `publicDomainTemplate` установлен как `%s-kube.company.my`, веб-интерфейс будет доступен по адресу `tools-kube.company.my`;
+      1. Кликните по кнопке скачивания Deckhouse CLI для вашей версии {{ $os }}.
+   - **С сайта Deckhouse**, по ссылке: [{{ $os }} {{ $arch }}]({{ $url }}).
+
+1. Распакуйте архив, переместите файл `d8.exe` в выбранный вами каталог и добавьте каталог в переменную `PATH` операционной системы.
+1. Разблокируйте файл `d8.exe`, например, следующим способом:
+   - Щёлкните правой кнопкой мыши на файле и выберите **Свойства** в контекстном меню.
+   - В окне **Свойства** убедитесь, что находитесь на вкладке **Общие**.
+   - Внизу вкладки **Общие** вы можете увидеть раздел **Безопасность** с сообщением о блокировке файла.
+   - Установите флажок **Разблокировать** или нажмите кнопку **Разблокировать**, затем нажмите **Применить** и **ОК**, чтобы сохранить изменения.
+1. Проверьте, что утилита работает:
+
+   ```bash
+   d8 help
+   ```
+
+1. Включите автодополнение в PowerShell, выполнив следующую команду:
+
+   ```shell
+   d8 completion powershell >> $PROFILE
+   ```
+
+Готово, вы установили Deckhouse CLI.
+{{ else }}
+1. Скачайте [архив для {{ $os }} {{ $arch }}]({{ $url }}) удобным для вас способом:
+
+   - **Из вашего кластера**:
+
+      1. Включите модуль [deckhouse-tools]({{ $toolsURL }});
+      1. Откройте веб-интерфейс со ссылками на скачивание. Адрес веб-интерфейса формируется в соответствии с шаблоном [publicDomainTemplate]({{ $globalURL }}) глобального параметра конфигурации Deckhouse (ключ `%s` заменяется на `tools`).
+
+         Например, если `publicDomainTemplate` установлен как `%s-kube.company.my`, веб-интерфейс будет доступен по адресу `tools-kube.company.my`;
+      1. Кликните по кнопке скачивания Deckhouse CLI для {{ $os }}.
+   - **С сайта Deckhouse**:
+
+     ```shell
+     curl -LO {{ $url }}
+     ```
+
+1. Распакуйте архив:
+
+   ```bash
+   tar -xvf "{{ $archive }}" "{{ $platform }}/bin/d8"
+   ```
+
+1. Переместите файл `d8` в каталог, находящийся в списке в переменной окружения `PATH` операционной системы (например, `/usr/local/bin/`):
+
+   ```bash
+   sudo mv "{{ $platform }}/bin/d8" /usr/local/bin/
+   ```
+
+   > Переменная окружения `PATH` содержит список каталогов, в которых ОС будет искать исполняемый файл при вызове команды из терминала. Просмотреть её можно командой `echo $PATH`.
+
+1. Проверьте, что утилита работает:
+
+   ```bash
+   d8 dk --help
+   ```
+
+Готово, вы установили Deckhouse CLI.
+{{ end }}
+{{- else -}}
+{{- if eq $os "Windows" }}
+1. Download the [archive for {{ $os }} {{ $arch }}]({{ $url }}) in a convenient way.
+
+   - **From your cluster**:
+
+      1. Turn on the [deckhouse-tools]({{ $toolsURL }}) module;
+      1. Open the web interface with download links. The web interface address is generated according to the [publicDomainTemplate]({{ $globalURL }}) template of the Deckhouse global configuration parameter (the `%s` key is replaced with `tools`).
+
+         For example, if `publicDomainTemplate` is set as `%s-kube.company.my`, the web interface will be available at `tools-kube.company.my`;
+      1. Click on the button to download Deckhouse CLI for {{ $os }}.
+   - **From the Deckhouse website**, download the archive from this link: [{{ $os }} {{ $arch }}]({{ $url }}).
+
+1. Extract the archive, move the `d8.exe` file to the directory of your choice, and add the directory to the `PATH` environment variable of the operating system.
+1. Unlock the `d8.exe` file, for example, in the following way:
+   - Right-click on the file and select **Properties** from the context menu.
+   - In the **Properties** window, make sure you are on the **General** tab.
+   - At the bottom of the **General** tab, you may see a **Security** section with a message saying that the file is blocked.
+   - Check the **Unblock** checkbox or click the **Unblock** button, then click **Apply** and **OK** to save the changes.
+1. Check that the CLI is working:
+
+   ```bash
+   d8 help
+   ```
+
+1. Enable auto-completion in PowerShell by running the following command:
+
+   ```shell
+   d8 completion powershell >> $PROFILE
+   ```
+
+Congrats, you have successfully installed Deckhouse CLI.
+{{ else }}
+1. Download the [archive for {{ $os }} {{ $arch }}]({{ $url }}) in a convenient way:
+
+   - **From your cluster**:
+
+      1. Turn on the [deckhouse-tools]({{ $toolsURL }}) module;
+      1. Open the web interface with download links. The web interface address is generated according to the [publicDomainTemplate]({{ $globalURL }}) template of the Deckhouse global configuration parameter (the `%s` key is replaced with `tools`).
+
+         For example, if `publicDomainTemplate` is set as `%s-kube.company.my`, the web interface will be available at `tools-kube.company.my`;
+      1. Click on the button to download Deckhouse CLI for {{ $os }}.
+   - **From the Deckhouse website**:
+
+     ```shell
+     curl -LO {{ $url }}
+     ```
+
+1. Extract the archive:
+
+   ```bash
+   tar -xvf "{{ $archive }}" "{{ $platform }}/bin/d8"
+   ```
+
+1. Move the `d8` file to the directory listed in the `PATH` system environment variable (for example, `/usr/local/bin/`):
+
+   ```bash
+   sudo mv "{{ $platform }}/bin/d8" /usr/local/bin/
+   ```
+
+   > `PATH` is a system environment variable containing a list of directories with executable files. This is where the OS will look for the binary when a command is run in the terminal. You can view this list with the `echo $PATH` command.
+
+1. Check that the CLI is working:
+
+   ```bash
+   d8 dk --help
+   ```
+
+Congrats, you have successfully installed Deckhouse CLI.
+{{ end }}
+{{- end -}}
