@@ -16,6 +16,7 @@ git:
   includePaths:
     - config/
     - content
+    - data/
     - layouts/
     - go.*
   stageDependencies:
